@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"><!-- 반드시. 없으면 한글 깨짐 -->
+<title>{{NAME}} — {{TAGLINE}}</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+KR:wght@200;300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg0:#0d0a07; --bg1:#141009; --bg2:#1b1610;
+  --amber:#c9973f; --amber-hi:#e5c07b; --amber-dim:rgba(201,151,63,.34);
+  --wax:#6f1d1d; --wax-hi:#8a2a26;
+  --ink-1:rgba(238,229,212,.93); --ink-2:rgba(238,229,212,.66);
+  --ink-3:rgba(238,229,212,.40); --ink-4:rgba(238,229,212,.24);
+  --line:rgba(238,229,212,.12); --line-soft:rgba(238,229,212,.07);
+  --serif-en:'Cormorant Garamond',Georgia,serif;
+  --serif-kr:'Noto Serif KR','Cormorant Garamond',serif;
+  --mono:'IBM Plex Mono',monospace;
+  --ease-expo:cubic-bezier(.16,1,.3,1); --ease-out:cubic-bezier(0,0,.2,1);
+  --dur-reveal:900ms;
+  --w-max:1244px; --w-read:620px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg0);color:var(--ink-1);
+  font-family:var(--serif-kr);font-size:14px;line-height:1.7;font-weight:300;
+  letter-spacing:-.011em;word-break:keep-all;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+::selection{background:var(--amber-dim)}
+.shell{max-width:var(--w-max);margin:0 auto;padding:0 clamp(20px,5vw,64px)}
+.mono{font-family:var(--mono);text-transform:uppercase;letter-spacing:.22em;font-size:11px;color:var(--ink-3)}
+
+/* 고정 레이어 */
+#glow{position:fixed;width:640px;height:640px;border-radius:50%;pointer-events:none;z-index:1;
+  mix-blend-mode:screen;transform:translate(-50%,-50%);
+  background:radial-gradient(circle,rgba(201,151,63,.13),transparent 60%)}
+@media (hover:none){#glow{display:none}}
+#progress{position:fixed;top:0;left:0;height:2px;width:0;z-index:200;
+  background:linear-gradient(90deg,var(--amber),var(--amber-hi))}
+body::after{content:"";position:fixed;inset:0;z-index:9999;pointer-events:none;opacity:.05;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation:grain 900ms steps(3) infinite}
+@keyframes grain{0%{transform:translate(0,0)}33%{transform:translate(-2%,1%)}66%{transform:translate(1%,-2%)}}
+
+/* ── 진입 게이트 ── */
+body.sealed{overflow:hidden;height:100dvh}
+#overlay{position:fixed;inset:0;z-index:100}
+#overlay .panel{position:absolute;left:0;right:0;height:50.5%;background:var(--bg0);
+  transition:transform 1.6s var(--ease-expo);transition-delay:.45s}
+#overlay .panel.top{top:0}#overlay .panel.bottom{bottom:0}
+body.open #overlay .panel.top{transform:translateY(-101%)}
+body.open #overlay .panel.bottom{transform:translateY(101%)}
+#seam{position:absolute;top:50%;left:0;right:0;height:2px;transform:scaleX(0);z-index:101;
+  background:linear-gradient(90deg,transparent,#e5c07b,#f4dfae,#e5c07b,transparent)}
+body.open #seam{animation:seam 1.7s var(--ease-expo) .25s forwards}
+@keyframes seam{40%{transform:scaleX(1);opacity:1}100%{opacity:0}}
+#seal-wrap{position:absolute;inset:0;z-index:102;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:22px;transition:.6s var(--ease-expo)}
+body.open #seal-wrap{opacity:0;transform:scale(.92)}
+body.done #overlay{visibility:hidden}
+.inv-no{font-family:var(--mono);letter-spacing:.34em;font-size:11px;color:var(--ink-3);text-transform:uppercase}
+.inv-no b{color:var(--amber-hi)}
+#seal-btn{background:none;border:0;cursor:pointer;padding:0}
+.seal{width:132px;height:132px;border-radius:50%;display:grid;place-items:center;
+  background:radial-gradient(circle at 38% 32%,#93332a,#420d10 72%);
+  box-shadow:0 10px 40px -8px #000,inset 0 2px 8px rgba(255,220,170,.25),inset 0 -8px 20px rgba(0,0,0,.5);
+  font-family:var(--serif-en);font-size:64px;color:#5a161a;
+  text-shadow:0 1px 0 rgba(255,210,160,.35);transition:transform .3s}
+#seal-btn:hover .seal{transform:scale(1.04)}
+.hint{font-family:var(--serif-kr);color:var(--ink-2);font-size:15px}
+.hint-en{font-family:var(--mono);letter-spacing:.2em;font-size:10px;color:var(--ink-4);text-transform:uppercase;margin-top:-14px}
+
+/* ── HERO ── */
+#hero{position:relative;min-height:100dvh;display:flex;flex-direction:column;justify-content:flex-end;
+  padding-bottom:clamp(48px,10vh,110px)}
+.hero-bg{position:absolute;inset:0;z-index:-1;overflow:hidden;
+  background:radial-gradient(120% 90% at 70% 20%,var(--bg2),var(--bg0) 70%)}
+.hero-bg::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(0deg,var(--bg0),transparent 60%),linear-gradient(90deg,var(--bg0) 10%,transparent 55%)}
+.topline{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;
+  position:absolute;top:clamp(24px,5vh,48px);left:0;right:0;padding:0 clamp(20px,5vw,64px)}
+.wordmark{font-family:var(--serif-en);font-weight:400;line-height:.92;letter-spacing:-.01em;
+  font-size:clamp(72px,15vw,220px);margin:0;
+  background:linear-gradient(160deg,#f2e7cf 20%,#cfa860 58%,#8a6a2e 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.hero-sub{max-width:44ch;margin:22px 0 0;font-size:clamp(15px,2vw,19px);color:var(--ink-2)}
+.hero-sub .en{font-family:var(--serif-en);font-style:italic}
+.scrollcue{position:absolute;right:clamp(20px,5vw,64px);bottom:clamp(48px,10vh,110px);
+  writing-mode:vertical-rl;font-family:var(--mono);letter-spacing:.24em;font-size:10px;color:var(--ink-3);text-transform:uppercase}
+
+/* ── 섹션 공통 ── */
+section{position:relative;padding:clamp(90px,13vh,150px) 0}
+.sec-no{font-family:var(--mono);letter-spacing:.24em;font-size:11px;color:var(--amber);text-transform:uppercase;margin-bottom:16px}
+.sec-h{font-family:var(--serif-en);font-weight:300;font-size:clamp(38px,6.4vw,74px);line-height:1;margin:0;letter-spacing:-.01em}
+.sec-h .kr{font-family:var(--serif-kr)}
+.read{max-width:var(--w-read);color:var(--ink-2);font-size:15.5px;margin:34px 0 0}
+.read b{color:var(--ink-1);font-weight:400}
+
+/* 리빌 */
+.rv{opacity:0;transform:translateY(26px);
+  transition:opacity var(--dur-reveal) var(--ease-expo),transform var(--dur-reveal) var(--ease-expo);
+  transition-delay:var(--d,0ms)}
+.rv.lit{opacity:1;transform:none}
+
+/* 이미지 프레임 + 현상 (CSS 플레이스홀더, 실제론 사진 태그로 교체) */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:clamp(16px,3vw,34px);margin-top:44px}
+.frame{position:relative;overflow:hidden;border:1px solid var(--line);aspect-ratio:4/3;background:var(--bg1)}
+.frame .ph{position:absolute;inset:0;transform:scale(1.07);filter:brightness(.62) sepia(.14);
+  transition:transform 1.6s var(--ease-expo),filter 1.6s var(--ease-expo);
+  background:radial-gradient(60% 80% at 30% 20%,rgba(201,151,63,.28),transparent 60%),linear-gradient(135deg,#2a1d10,#140d07)}
+.frame.lit .ph{transform:scale(1);filter:brightness(.86)}
+.frame .cap{position:absolute;left:12px;bottom:10px;font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:var(--ink-3);text-transform:uppercase}
+
+/* ── 저니 (휠다운 + 가로 + 빨려들어감 복합 · 5~6컷) ──
+   세로 휠 → rail이 가로로 팬(가로). 각 패널의 깊이 레이어가 중심에 올수록 스케일업(빨려들어감).
+   JS가 스크롤 진행도 p로 rail translateX와 패널별 로컬 진행도를 구동한다. */
+#journey{position:relative;height:600vh}                  /* 높이 = 6컷 여행 길이 */
+#journey .stick{position:sticky;top:0;height:100dvh;overflow:hidden;
+  background:radial-gradient(130% 90% at 50% 40%,var(--bg2),var(--bg0) 74%)}
+#journey .rail{display:flex;height:100dvh;will-change:transform}
+#journey .panel{flex:0 0 100vw;height:100dvh;position:relative;display:grid;place-items:center;overflow:hidden}
+/* 깊이 레이어: far(느리게·흐릿) / mid(플레이트) / near(큰 인덱스, 반대로) */
+#journey .lyr{position:absolute;left:50%;top:50%;will-change:transform}
+#journey .far{width:min(72vw,780px);height:min(72vw,780px);border-radius:50%;filter:blur(58px);opacity:.5;
+  background:radial-gradient(circle,var(--tint,rgba(201,151,63,.42)),transparent 62%)}
+#journey .mid{width:min(52vw,560px);max-width:86vw;aspect-ratio:5/4;border:1px solid var(--line);
+  background:radial-gradient(70% 80% at 40% 30%,#3a2412,#140d07)}
+#journey .near{text-align:center;z-index:3;width:86vw;max-width:var(--w-max)}
+#journey .near .idx{font-family:var(--mono);letter-spacing:.3em;color:var(--wax-hi);font-size:13px}
+#journey .near h3{font-family:var(--serif-kr);font-weight:300;font-size:clamp(32px,6vw,78px);line-height:1.02;margin:14px 0 0;letter-spacing:-.01em}
+#journey .near h3 .en{font-family:var(--serif-en);font-style:italic;
+  background:linear-gradient(160deg,#f2e7cf,#cfa860 60%,#8a6a2e);-webkit-background-clip:text;background-clip:text;color:transparent}
+#journey .near p{color:var(--ink-2);max-width:34ch;margin:16px auto 0}
+#journey .jrny-eyebrow{position:absolute;top:clamp(24px,6vh,54px);left:0;right:0;text-align:center;z-index:5}
+#journey .jrny-cue{position:absolute;bottom:6vh;left:0;right:0;text-align:center;z-index:5;
+  font-family:var(--mono);font-size:10px;letter-spacing:.24em;color:var(--ink-4);text-transform:uppercase}
+#journey .track{position:absolute;bottom:calc(6vh + 22px);left:0;right:0;z-index:5;display:flex;gap:8px;justify-content:center}
+#journey .track i{width:26px;height:2px;background:var(--line);transition:background .3s}
+
+/* ── 숫자 ── */
+.nums{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin-top:44px}
+.nums .cell{background:var(--bg0);padding:clamp(22px,3vw,38px)}
+.nums .n{font-family:var(--serif-en);font-size:clamp(40px,6vw,68px);line-height:1;color:var(--amber-hi);font-variant-numeric:tabular-nums}
+.nums .c{color:var(--ink-3);font-size:13px;margin-top:10px}
+
+/* ── 닫기 ── */
+#close{text-align:center;min-height:80vh;display:flex;flex-direction:column;justify-content:center;align-items:center}
+#close .word{font-family:var(--serif-en);font-weight:200;font-size:clamp(24px,4.2vw,44px);color:var(--ink-1);max-width:20ch}
+.contact{display:flex;flex-wrap:wrap;gap:clamp(20px,5vw,60px);justify-content:center;margin-top:44px}
+.contact div .k{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--ink-4);text-transform:uppercase}
+.contact div .v{color:var(--ink-2);margin-top:6px}
+footer{padding:34px 0;border-top:1px solid var(--line-soft);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+
+@media(max-width:860px){
+  .grid2{grid-template-columns:1fr}
+  .nums{grid-template-columns:1fr}
+}
+/* 저니: 모바일/reduced-motion에서는 가로팬·핀 해제하고 세로 스택 */
+@media(max-width:860px),(prefers-reduced-motion:reduce){
+  #journey{height:auto}
+  #journey .stick{position:static;height:auto}
+  #journey .rail{flex-direction:column;height:auto}
+  #journey .panel{flex:none;min-height:78vh;padding:8vh 0}
+  #journey .lyr{position:absolute}#journey .near{position:relative}
+}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *{animation-duration:.01ms!important;transition-duration:.01ms!important}
+  .rv{opacity:1;transform:none}
+  .frame .ph{transform:none;filter:brightness(.86)}
+}
+</style>
+</head>
+<body class="sealed">
+
+<div id="glow"></div>
+<div id="progress"></div>
+
+<!-- 진입 게이트 -->
+<div id="overlay" role="dialog" aria-label="초대장 개봉">
+  <div class="panel top"></div><div class="panel bottom"></div>
+  <div id="seam"></div>
+  <div id="seal-wrap">
+    <p class="inv-no">Private Invitation · <b>N° 001</b></p>
+    <button id="seal-btn" aria-label="인장을 눌러 개봉하십시오"><div class="seal">{{INITIAL}}</div></button>
+    <p class="hint">인장을 눌러 개봉하십시오</p>
+    <p class="hint-en">Break the seal to enter</p>
+  </div>
+</div>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="topline">
+    <span class="mono">{{CATEGORY}} · SEOUL</span>
+    <span class="mono">Est. {{YEAR}}</span>
+  </div>
+  <div class="shell">
+    <h1 class="wordmark">{{NAME}}</h1>
+    <p class="hero-sub">{{HERO_KR}} <span class="en">{{HERO_EN}}</span></p>
+  </div>
+  <span class="scrollcue">Scroll</span>
+</section>
+
+<!-- Nº 01 -->
+<section id="s1">
+  <div class="shell">
+    <div class="sec-no rv">Nº 01 — About</div>
+    <h2 class="sec-h rv"><span class="kr">{{S1_TITLE}}</span></h2>
+    <p class="read rv" style="--d:120ms">{{S1_BODY_1}} <b>{{S1_EMPH}}</b> {{S1_BODY_2}}</p>
+    <div class="grid2">
+      <div class="frame rv"><div class="ph"></div><span class="cap">Fig. 01 — {{IMG1_CAP}}</span></div>
+      <div class="frame rv" style="--d:120ms"><div class="ph"></div><span class="cap">Fig. 02 — {{IMG2_CAP}}</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- Nº 02 · 저니 (휠 내리면 가로로 흐르고, 각 컷은 깊이로 빨려들어감) -->
+<section id="journey">
+  <div class="stick">
+    <span class="jrny-eyebrow mono">Nº 02 — The Night, in six frames</span>
+    <div class="rail" id="rail">
+      <!-- 컷 6개. --tint로 컷마다 색기운 다르게 -->
+      <div class="panel" style="--tint:rgba(201,151,63,.42)">
+        <div class="lyr far"></div><div class="lyr mid"></div>
+        <div class="lyr near"><div class="idx">01</div><h3>{{BEAT1_KR}} <span class="en">{{BEAT1_EN}}</span></h3><p>{{BEAT1_BODY}}</p></div>
+      </div>
+      <div class="panel" style="--tint:rgba(138,42,38,.5)">
+        <div class="lyr far"></div><div class="lyr mid"></div>
+        <div class="lyr near"><div class="idx">02</div><h3>{{BEAT2_KR}} <span class="en">{{BEAT2_EN}}</span></h3><p>{{BEAT2_BODY}}</p></div>
+      </div>
+      <div class="panel" style="--tint:rgba(201,151,63,.5)">
+        <div class="lyr far"></div><div class="lyr mid"></div>
+        <div class="lyr near"><div class="idx">03</div><h3>{{BEAT3_KR}} <span class="en">{{BEAT3_EN}}</span></h3><p>{{BEAT3_BODY}}</p></div>
+      </div>
+      <div class="panel" style="--tint:rgba(111,29,29,.5)">
+        <div class="lyr far"></div><div class="lyr mid"></div>
+        <div class="lyr near"><div class="idx">04</div><h3>{{BEAT4_KR}} <span class="en">{{BEAT4_EN}}</span></h3><p>{{BEAT4_BODY}}</p></div>
+      </div>
+      <div class="panel" style="--tint:rgba(229,192,123,.42)">
+        <div class="lyr far"></div><div class="lyr mid"></div>
+        <div class="lyr near"><div class="idx">05</div><h3>{{BEAT5_KR}} <span class="en">{{BEAT5_EN}}</span></h3><p>{{BEAT5_BODY}}</p></div>
+      </div>
+      <div class="panel" style="--tint:rgba(201,151,63,.55)">
+        <div class="lyr far"></div><div class="lyr mid"></div>
+        <div class="lyr near"><div class="idx">06</div><h3>{{BEAT6_KR}} <span class="en">{{BEAT6_EN}}</span></h3><p>{{BEAT6_BODY}}</p></div>
+      </div>
+    </div>
+    <div class="track" id="jtrack"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <span class="jrny-cue">계속 스크롤 →</span>
+  </div>
+</section>
+
+<!-- Nº 03 · 숫자 -->
+<section id="s3">
+  <div class="shell">
+    <div class="sec-no rv">Nº 03 — By the numbers</div>
+    <h2 class="sec-h rv"><span class="kr">{{S3_TITLE}}</span></h2>
+    <div class="nums">
+      <div class="cell rv"><div class="n">{{N1}}</div><div class="c">{{N1_CAP}}</div></div>
+      <div class="cell rv" style="--d:120ms"><div class="n">{{N2}}</div><div class="c">{{N2_CAP}}</div></div>
+      <div class="cell rv" style="--d:240ms"><div class="n">{{N3}}</div><div class="c">{{N3_CAP}}</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 닫기 -->
+<section id="close">
+  <div class="shell">
+    <p class="word rv">{{CLOSE_LINE}}</p>
+    <div class="contact rv" style="--d:120ms">
+      <div><div class="k">Host</div><div class="v">{{CONTACT_HOST}}</div></div>
+      <div><div class="k">Tel</div><div class="v">{{CONTACT_TEL}}</div></div>
+      <div><div class="k">Instagram</div><div class="v">{{CONTACT_IG}}</div></div>
+    </div>
+  </div>
+</section>
+
+<footer class="shell">
+  <span class="mono">{{NAME}}</span>
+  <span class="mono">© {{YEAR}}</span>
+</footer>
+
+<script>
+(function(){
+  var body=document.body,RM=matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+  /* 진입 게이트 상태머신 */
+  var opened=false;
+  function open(){ if(opened)return; opened=true;
+    body.classList.remove('sealed'); body.classList.add('open');
+    setTimeout(function(){ body.classList.add('done'); },1600);
+  }
+  var sb=document.getElementById('seal-btn');
+  if(sb) sb.addEventListener('click',open);
+  addEventListener('wheel',open,{passive:true,once:true});
+  addEventListener('touchmove',open,{passive:true,once:true});
+  addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '||e.key==='ArrowDown')open(); },{once:true});
+  if(RM)open();
+
+  /* 스크롤 리빌 */
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('lit'); io.unobserve(e.target); }});
+  },{threshold:.18,rootMargin:'0px 0px -6% 0px'});
+  document.querySelectorAll('.rv,.frame').forEach(function(el){ io.observe(el); });
+
+  /* 커서 글로우 (데스크톱만) */
+  if(matchMedia('(hover:hover)').matches){
+    var g=document.getElementById('glow'),gx=innerWidth/2,gy=innerHeight/2,tx=gx,ty=gy;
+    addEventListener('mousemove',function(e){ tx=e.clientX; ty=e.clientY; });
+    (function loop(){ gx+=(tx-gx)*.07; gy+=(ty-gy)*.07; g.style.left=gx+'px'; g.style.top=gy+'px'; requestAnimationFrame(loop); })();
+  }
+
+  /* 진행바 + 저니(가로팬 + 깊이) */
+  var bar=document.getElementById('progress');
+  var jr=document.getElementById('journey'), rail=document.getElementById('rail');
+  var panels=rail?[].slice.call(rail.children):[];
+  var dots=[].slice.call(document.querySelectorAll('#jtrack i'));
+  var N=panels.length, wide=matchMedia('(min-width:861px)').matches && !RM;
+  function render(){
+    var h=document.documentElement.scrollHeight-innerHeight;
+    bar.style.width=(h>0?scrollY/h*100:0)+'%';
+    if(!jr||!wide) return;
+    var r=jr.getBoundingClientRect(), total=jr.offsetHeight-innerHeight;
+    var p=Math.min(1,Math.max(0,(-r.top)/total));         // 0→1 전체 진행도
+    // 가로 팬: rail을 (N-1)*100vw 만큼 왼쪽으로
+    rail.style.transform='translateX('+(-p*(N-1)*100)+'vw)';
+    // 각 패널 깊이: 중심에 가까울수록 레이어 스케일업(빨려들어감)
+    var pos=p*(N-1);                                       // 현재 어느 컷 근처인지
+    panels.forEach(function(panel,i){
+      var d=Math.min(1,Math.abs(pos-i));                  // 0=중심, 1=화면밖
+      var c=1-d;                                          // 중심도
+      var far=panel.querySelector('.far'), mid=panel.querySelector('.mid'), near=panel.querySelector('.near');
+      // far 느리게, mid 보통, near 빠르게 + 중심에서 확대
+      far.style.transform ='translate(-50%,-50%) translateX('+(d*40*(pos<i?1:-1))+'px) scale('+(1.05+c*.12)+')';
+      mid.style.transform ='translate(-50%,-50%) translateX('+(d*120*(pos<i?1:-1))+'px) scale('+(.86+c*.18)+')';
+      near.style.transform='translate(-50%,-50%) translateX('+(d*240*(pos<i?1:-1))+'px) scale('+(.9+c*.14)+')';
+      near.style.opacity=String(Math.max(0,c*1.4-.15));
+      near.style.left='50%'; near.style.top='50%';
+    });
+    dots.forEach(function(dot,i){ dot.style.background = (Math.round(pos)===i)?'var(--amber)':'var(--line)'; });
+  }
+  // near 기본 위치(패널 grid center 대신 절대배치로 깊이 이동 가능하게)
+  panels.forEach(function(p){ var n=p.querySelector('.near'); if(n){ n.style.position='absolute'; } });
+  var tick=false;
+  addEventListener('scroll',function(){ if(!tick){ requestAnimationFrame(function(){ render(); tick=false; }); tick=true; }},{passive:true});
+  addEventListener('resize',function(){ wide=matchMedia('(min-width:861px)').matches && !RM; render(); });
+  render();
+})();
+</script>
+</body>
+</html>
