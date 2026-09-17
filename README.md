@@ -16,15 +16,17 @@ cinematic-onepager-skill/
 ├── skill/cinematic-onepager/           → ~/.claude/skills/cinematic-onepager
 │   ├── SKILL.md                        절대 규칙 6개 · 작업 순서 · 아키타입 A/B/C · 매크로 4결정 · 커널 · 흔한 실수
 │   ├── assets/template.html            작동하는 단일파일 스타터(토큰·리빌·진행바·핀 스크롤리텔링·그레인·reduced-motion)
-│   └── references/
-│       ├── motion.md                   모션 레시피 (게이트/커튼, 리빌 스태거, 진행바, 핀, 커서글로우, 이미지 현상, 마퀴, % 로더…)
-│       ├── palettes.md                 검증된 팔레트 3종 + 색 규칙
-│       ├── typography.md               폰트 페어링, 한글/영문 처리, 스케일
-│       └── production.md               실사진(Gemini)·Vercel 배포·모바일 실기기 함정·에이전트 병렬 제작
+│   ├── references/
+│   │   ├── motion.md                   모션 레시피 (게이트/커튼, 리빌 스태거, 진행바, 핀, 커서글로우, 이미지 현상, 마퀴, % 로더…)
+│   │   ├── palettes.md                 검증된 팔레트 3종 + 색 규칙
+│   │   ├── typography.md               폰트 페어링, 한글/영문 처리, 스케일
+│   │   └── production.md               실사진(Gemini·Flow)·Vercel 배포·모바일 실기기 함정·에이전트 병렬 제작
+│   └── scripts/check-header-overlap.mjs  고정 상단바↔첫 화면·핀 콘텐츠 겹침 검사 (11개 화면, PLAYWRIGHT 환경변수로 경로 지정)
 ├── design-refs/                        → ~/.claude/design-refs
 │   ├── web-craft-baseline.md           하이엔드 사이트 9~10곳 getComputedStyle 실측 수치 (타이포·색·radius·모션)
 │   ├── ui-style-picker-ko.md           UI 스타일 10종 × 한국 업종 매핑 + "AI 주문 번역표"
 │   ├── probe.js                        아무 사이트 콘솔에 붙여 수치를 다시 재는 스크립트
+│   ├── korean-agency-baseline.md       한국 제작사 실측 — "AI 티" 원인 12가지와 대처
 │   └── CLAUDE-ui-rules.md              ~/.claude/CLAUDE.md 에 넣어 쓰는 "UI 작업 규칙" (스타일 먼저 → 수치 → 코드 → 폰 폭 검증)
 └── install.sh
 ```
